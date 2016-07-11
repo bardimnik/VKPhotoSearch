@@ -4,7 +4,6 @@ import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -16,7 +15,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
-
+import android.widget.Toast;
 import com.squareup.picasso.Picasso;
 import com.vk.sdk.api.VKApi;
 import com.vk.sdk.api.VKError;
@@ -29,9 +28,15 @@ public class SearchActivity extends AppCompatActivity {
 
     private static final String DIALOG_IMAGE = "image";
     private VKRequest myRequest;
-    FloatingActionButton floatingActionButton;
-    GridView gridView;
-    VKPhotoArray photoArray;
+    private GridView gridView;
+    private VKPhotoArray photoArray;  // массив объектов фото
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Toast.makeText(getApplicationContext(),"Введите поисковый запрос или выберите точку на карте.", Toast.LENGTH_LONG).show();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,20 +46,19 @@ public class SearchActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         gridView = (GridView) findViewById(R.id.gridView);
+        if (savedInstanceState != null)
+            photoArray = savedInstanceState.getParcelable("array");  // при повороте экрана-сворачивании восстановление состояния
         setupAdapter();
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab); // кнопка для открытия карт
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
                 Intent i = new Intent(getApplicationContext(), MapsActivity.class);
                 startActivityForResult(i,1);
             }
         });
     }
-
 
     void setupAdapter() {
         if ( gridView == null) return;
@@ -90,7 +94,7 @@ public class SearchActivity extends AppCompatActivity {
                 }
             });
 
-            Picasso.with(getApplicationContext()).load(url).into(imageView);
+            Picasso.with(getApplicationContext()).load(url).into(imageView); //  загрузка фотографий в грид
             return convertView;
         }
     }
@@ -110,8 +114,10 @@ public class SearchActivity extends AppCompatActivity {
     VKRequest.VKRequestListener mRequestListener = new VKRequest.VKRequestListener() {
         @Override
         public void onComplete(VKResponse response) {
-            photoArray = (VKPhotoArray) response.parsedModel;
+            photoArray = (VKPhotoArray) response.parsedModel; // полученные фото в gson
             setupAdapter();
+            if (photoArray.isEmpty())
+                Toast.makeText(getApplicationContext(),"Ничего не найдено.",Toast.LENGTH_LONG).show();
         }
 
         @Override
@@ -137,15 +143,8 @@ public class SearchActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
         if (id == R.id.search) {
             onSearchRequested();
         }
@@ -157,22 +156,49 @@ public class SearchActivity extends AppCompatActivity {
     protected void onNewIntent(Intent intent) {
         if(Intent.ACTION_SEARCH.equals(intent.getAction())) {
             // Здесь будет храниться то, что пользователь ввёл в поисковой строке
-            String search = intent.getStringExtra(SearchManager.QUERY);
-            VKRequest request = VKRequest.getRegisteredRequest(VKApi.photos().search(search,0,0,0,0, 100).registerObject());
+            String search = intent.getStringExtra(SearchManager.QUERY); // поисковой запрос
+            VKRequest request = VKRequest.getRegisteredRequest(VKApi.photos().search(search,0,0,0,0, 300).registerObject());
             myRequest = request;
             myRequest.executeWithListener(mRequestListener);
-
         }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (data == null) {return;}
-        Double lat = data.getDoubleExtra("lat", 55.75);
+        Double lat = data.getDoubleExtra("lat", 55.75); // получаем координаты и выполняем запрос фото
         Double longi = data.getDoubleExtra("long", 37.61);
-
-        VKRequest request = VKRequest.getRegisteredRequest(VKApi.photos().search("",lat,longi,0,0, 100).registerObject());
+        VKRequest request = VKRequest.getRegisteredRequest(VKApi.photos().search("",lat,longi,0,0, 300).registerObject());
         myRequest = request;
         myRequest.executeWithListener(mRequestListener);
+        Toast.makeText(getApplicationContext(),"Координаты выбраны, сейчас найдем фото.",Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (myRequest != null)
+            myRequest.cancel();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable("array",photoArray);
+        if (myRequest != null) {
+            outState.putLong("request", myRequest.registerObject());
+        }
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        long requestId = savedInstanceState.getLong("request");
+        myRequest = VKRequest.getRegisteredRequest(requestId);
+        if (myRequest != null) {
+            myRequest.unregisterObject();
+            myRequest.setRequestListener(mRequestListener);
+        }
     }
 }

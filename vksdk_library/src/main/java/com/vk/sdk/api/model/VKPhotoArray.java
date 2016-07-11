@@ -22,6 +22,7 @@
 package com.vk.sdk.api.model;
 
 import android.os.Parcel;
+import android.os.Parcelable;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,7 +30,7 @@ import org.json.JSONObject;
 /**
  * Array of API photos objects
 */
-public class VKPhotoArray extends VKList<VKApiPhoto> {
+public class VKPhotoArray extends VKList<VKApiPhoto> implements Parcelable {
     @Override
     public VKApiModel parse(JSONObject response) throws JSONException {
         fill(response, VKApiPhoto.class);

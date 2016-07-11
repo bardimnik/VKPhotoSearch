@@ -4,4 +4,6 @@
     <string name="title_activity_maps">Map</string>
     <string name="search_hint">Поиск фото</string>
     <integer name="com_vk_sdk_AppId">3974615</integer>
+    <string name="maps_activity_toast">Выбери точку на карте, в которой искать фото</string>
+
 </resources>

@@ -1,37 +1,98 @@
 package com.opiumfive.vkphotosearch;
 
+import android.app.DownloadManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.Point;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
+import static android.content.Context.DOWNLOAD_SERVICE;
+
 /**
  * Created by allsw on 11.07.2016.
+ * Фрагмент с детализированным изображением, которое можно скачать с помощью длительного нажатия.
  */
 
-public class ImageFragment extends DialogFragment {
+public class ImageFragment extends DialogFragment implements View.OnLongClickListener {
     private ImageView imageView;
+    String path;
+    DownloadManager dm;
+    private  long enqueue;
 
     public static ImageFragment newInstance(String imagePath) {
         ImageFragment fragment = new ImageFragment();
+
         Bundle args = new Bundle();
         args.putSerializable("image_path", imagePath);
         fragment.setArguments(args);
         fragment.setStyle(DialogFragment.STYLE_NO_TITLE, 0);
+
         return fragment;
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         imageView = new ImageView(getActivity());
-        String path = (String)getArguments().getSerializable("image_path");
-        Picasso.with(getActivity()).load(path).into(imageView);
-        return imageView;
+        WindowManager w = getActivity().getWindowManager();
+        Point size = new Point();
+        w.getDefaultDisplay().getSize(size);
+        imageView.setMinimumWidth(size.x);
+        imageView.setBackgroundColor(Color.BLACK);
 
+        imageView.setOnLongClickListener(this);
+        path = (String)getArguments().getSerializable("image_path");
+        Picasso.with(getActivity()).load(path).into(imageView);
+
+        BroadcastReceiver receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
+                    long downloadId = intent.getLongExtra(
+                            DownloadManager.EXTRA_DOWNLOAD_ID, 0);
+                    DownloadManager.Query query = new DownloadManager.Query();
+                    query.setFilterById(enqueue);
+                    Cursor c = dm.query(query);
+                    if (c.moveToFirst()) {
+                        int columnIndex = c
+                                .getColumnIndex(DownloadManager.COLUMN_STATUS);
+                        if (DownloadManager.STATUS_SUCCESSFUL == c
+                                .getInt(columnIndex)) {
+
+
+                            String uriString = c
+                                    .getString(c
+                                            .getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
+
+                        }
+                    }
+                }
+            }
+        };
+        getActivity().registerReceiver(receiver, new IntentFilter(
+                DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+        return imageView;
+    }
+
+    @Override
+    public boolean onLongClick(View view) {
+        dm = (DownloadManager) getActivity().getSystemService(DOWNLOAD_SERVICE);
+        DownloadManager.Request request = new DownloadManager.Request(
+                Uri.parse(path));
+        enqueue = dm.enqueue(request);
+        return false;
     }
 }

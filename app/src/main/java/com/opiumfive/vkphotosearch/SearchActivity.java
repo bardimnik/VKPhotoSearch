@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 import com.squareup.picasso.Picasso;
 import com.vk.sdk.api.VKApi;
@@ -30,12 +31,13 @@ public class SearchActivity extends AppCompatActivity {
     private VKRequest myRequest;
     private GridView gridView;
     private VKPhotoArray photoArray;  // массив объектов фото
+    ProgressBar progressBar;
 
 
     @Override
     protected void onStart() {
         super.onStart();
-        Toast.makeText(getApplicationContext(),"Введите поисковый запрос или выберите точку на карте.", Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(),"Введите поисковый запрос или выберите точку на карте.", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -46,6 +48,8 @@ public class SearchActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         gridView = (GridView) findViewById(R.id.gridView);
+        gridView.setEmptyView(findViewById(R.id.textView));
+        progressBar = (ProgressBar) findViewById(R.id.progressBar2);
         if (savedInstanceState != null)
             photoArray = savedInstanceState.getParcelable("array");  // при повороте экрана-сворачивании восстановление состояния
         setupAdapter();
@@ -63,7 +67,7 @@ public class SearchActivity extends AppCompatActivity {
     void setupAdapter() {
         if ( gridView == null) return;
         if (photoArray != null) {
-            gridView.setAdapter(new ArrayAdapter<VKApiPhoto>(this,android.R.layout.simple_gallery_item, photoArray));
+            gridView.setAdapter(new ArrayAdapter<>(this,android.R.layout.simple_gallery_item, photoArray));
             gridView.setAdapter(new GalleryItemAdapter(photoArray));
         } else {
             gridView.setAdapter(null);
@@ -85,12 +89,12 @@ public class SearchActivity extends AppCompatActivity {
                     .findViewById(R.id.gallery_item_ImageView);
             String url = getItem(position).toString();
             final String url_big = getBiggestNotEmptyImage(getItem(position));
-
+            final String uid = "id" + getItem(position).owner_id;
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     FragmentManager fm = getSupportFragmentManager();
-                    ImageFragment.newInstance(url_big).show( fm, DIALOG_IMAGE);
+                    ImageFragment.newInstance(url_big, uid).show( fm, DIALOG_IMAGE);
                 }
             });
 
@@ -115,9 +119,11 @@ public class SearchActivity extends AppCompatActivity {
         @Override
         public void onComplete(VKResponse response) {
             photoArray = (VKPhotoArray) response.parsedModel; // полученные фото в gson
+            progressBar.setVisibility(View.INVISIBLE);
             setupAdapter();
             if (photoArray.isEmpty())
-                Toast.makeText(getApplicationContext(),"Ничего не найдено.",Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(),"Ничего не найдено.",Toast.LENGTH_SHORT).show();
+
         }
 
         @Override
@@ -127,6 +133,7 @@ public class SearchActivity extends AppCompatActivity {
         @Override
         public void onProgress(VKRequest.VKProgressType progressType, long bytesLoaded,
                                long bytesTotal) {
+
         }
 
         @Override
@@ -160,6 +167,7 @@ public class SearchActivity extends AppCompatActivity {
             VKRequest request = VKRequest.getRegisteredRequest(VKApi.photos().search(search,0,0,0,0, 300).registerObject());
             myRequest = request;
             myRequest.executeWithListener(mRequestListener);
+            progressBar.setVisibility(View.VISIBLE);
         }
     }
 
@@ -168,10 +176,11 @@ public class SearchActivity extends AppCompatActivity {
         if (data == null) {return;}
         Double lat = data.getDoubleExtra("lat", 55.75); // получаем координаты и выполняем запрос фото
         Double longi = data.getDoubleExtra("long", 37.61);
-        VKRequest request = VKRequest.getRegisteredRequest(VKApi.photos().search("",lat,longi,0,0, 300).registerObject());
+        VKRequest request = VKRequest.getRegisteredRequest(VKApi.photos().search("",lat,longi,0,0, 500).registerObject());
         myRequest = request;
         myRequest.executeWithListener(mRequestListener);
-        Toast.makeText(getApplicationContext(),"Координаты выбраны, сейчас найдем фото.",Toast.LENGTH_LONG).show();
+        progressBar.setVisibility(View.VISIBLE);
+        Toast.makeText(getApplicationContext(),"Координаты выбраны, сейчас найдем фото.",Toast.LENGTH_SHORT).show();
     }
 
     @Override

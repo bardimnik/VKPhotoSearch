@@ -34,7 +34,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setOnMapLongClickListener(this);
-        // Add a marker in Sydney and move the camera
         LatLng moscow = new LatLng(55.75, 37.61);
         mMap.addMarker(new MarkerOptions().position(moscow).title("Marker in Moscow"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(moscow));
@@ -45,6 +44,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapLongClick(LatLng latLng) {
         Intent intent = new Intent();
+        mMap.addMarker(new MarkerOptions().position(latLng).title("New Marker"));
         intent.putExtra("lat", latLng.latitude);
         intent.putExtra("long", latLng.longitude);
         setResult(RESULT_OK, intent);

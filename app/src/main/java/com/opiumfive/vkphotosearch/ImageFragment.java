@@ -11,12 +11,16 @@ import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.vision.text.Text;
 import com.squareup.picasso.Picasso;
 
 import static android.content.Context.DOWNLOAD_SERVICE;
@@ -26,17 +30,19 @@ import static android.content.Context.DOWNLOAD_SERVICE;
  * Фрагмент с детализированным изображением, которое можно скачать с помощью длительного нажатия.
  */
 
-public class ImageFragment extends DialogFragment implements View.OnLongClickListener {
+public class ImageFragment extends DialogFragment implements View.OnLongClickListener, View.OnClickListener {
     private ImageView imageView;
     String path;
+    String uid;
     DownloadManager dm;
     private  long enqueue;
 
-    public static ImageFragment newInstance(String imagePath) {
+    public static ImageFragment newInstance(String imagePath, String userID) {
         ImageFragment fragment = new ImageFragment();
 
         Bundle args = new Bundle();
         args.putSerializable("image_path", imagePath);
+        args.putSerializable("user_id", userID);
         fragment.setArguments(args);
         fragment.setStyle(DialogFragment.STYLE_NO_TITLE, 0);
 
@@ -46,6 +52,7 @@ public class ImageFragment extends DialogFragment implements View.OnLongClickLis
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         imageView = new ImageView(getActivity());
+
         WindowManager w = getActivity().getWindowManager();
         Point size = new Point();
         w.getDefaultDisplay().getSize(size);
@@ -53,7 +60,9 @@ public class ImageFragment extends DialogFragment implements View.OnLongClickLis
         imageView.setBackgroundColor(Color.BLACK);
 
         imageView.setOnLongClickListener(this);
+        imageView.setOnClickListener(this);
         path = (String)getArguments().getSerializable("image_path");
+        uid = (String)getArguments().getSerializable("user_id");
         Picasso.with(getActivity()).load(path).into(imageView);
 
         BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -61,8 +70,7 @@ public class ImageFragment extends DialogFragment implements View.OnLongClickLis
             public void onReceive(Context context, Intent intent) {
                 String action = intent.getAction();
                 if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
-                    long downloadId = intent.getLongExtra(
-                            DownloadManager.EXTRA_DOWNLOAD_ID, 0);
+                    long downloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0);
                     DownloadManager.Query query = new DownloadManager.Query();
                     query.setFilterById(enqueue);
                     Cursor c = dm.query(query);
@@ -71,7 +79,6 @@ public class ImageFragment extends DialogFragment implements View.OnLongClickLis
                                 .getColumnIndex(DownloadManager.COLUMN_STATUS);
                         if (DownloadManager.STATUS_SUCCESSFUL == c
                                 .getInt(columnIndex)) {
-
 
                             String uriString = c
                                     .getString(c
@@ -94,5 +101,10 @@ public class ImageFragment extends DialogFragment implements View.OnLongClickLis
                 Uri.parse(path));
         enqueue = dm.enqueue(request);
         return false;
+    }
+
+    @Override
+    public void onClick(View view) {
+        Toast.makeText(getActivity(), uid, Toast.LENGTH_SHORT).show();
     }
 }

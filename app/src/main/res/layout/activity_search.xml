@@ -24,8 +24,18 @@
     </android.support.design.widget.AppBarLayout>
 
 
-
-
+<FrameLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Пусто. Выполните поисковый запрос."
+        android:id="@+id/textView"
+        android:textColor="#000"
+        android:layout_gravity="center"
+        android:gravity="center"/>
 
     <GridView
         android:fitsSystemWindows="true"
@@ -36,10 +46,8 @@
         android:numColumns="auto_fit"
         android:stretchMode="columnWidth"
         android:layout_gravity="bottom"
-
-        android:layout_marginTop="56dp"
-        />
-
+        android:layout_marginTop="56dp" />
+</FrameLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
@@ -48,5 +56,14 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
         app:srcCompat="@android:drawable/ic_dialog_map" />
+
+    <ProgressBar
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar2"
+        android:visibility="invisible"
+        tools:visibility="invisible"
+        android:layout_gravity="center"/>
 
 </android.support.design.widget.CoordinatorLayout>

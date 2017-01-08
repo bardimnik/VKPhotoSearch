@@ -2,6 +2,7 @@ package com.opiumfive.vkphotosearch;
 
 import android.app.SearchManager;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
@@ -17,6 +18,10 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+
+import com.nhaarman.supertooltips.ToolTip;
+import com.nhaarman.supertooltips.ToolTipRelativeLayout;
+import com.nhaarman.supertooltips.ToolTipView;
 import com.squareup.picasso.Picasso;
 import com.vk.sdk.api.VKApi;
 import com.vk.sdk.api.VKError;
@@ -32,13 +37,9 @@ public class SearchActivity extends AppCompatActivity {
     private GridView gridView;
     private VKPhotoArray photoArray;  // массив объектов фото
     ProgressBar progressBar;
+    ToolTipView myToolTipView;
+    ToolTipView myToolTipView2;
 
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        Toast.makeText(getApplicationContext(),"Введите поисковый запрос или выберите точку на карте.", Toast.LENGTH_SHORT).show();
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,13 +56,38 @@ public class SearchActivity extends AppCompatActivity {
         setupAdapter();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab); // кнопка для открытия карт
+        ToolTipRelativeLayout fabToolTip = (ToolTipRelativeLayout) findViewById(R.id.fabToolTip);
+        ToolTipRelativeLayout searchToolTip = (ToolTipRelativeLayout) findViewById(R.id.searchToolTip);
+        ToolTip toolTipForFab = new ToolTip()
+                .withText("Поиск по карте")
+                .withTextColor(Color.parseColor("#ffffff"))
+                .withColor(Color.parseColor("#3b5f87"))
+                .withShadow()
+                .withAnimationType(ToolTip.AnimationType.FROM_TOP);
+        ToolTip toolTipForSearch = new ToolTip()
+                .withText("Поиск по ключевым словам")
+                .withTextColor(Color.parseColor("#ffffff"))
+                .withColor(Color.parseColor("#3b5f87"))
+                .withShadow()
+                .withAnimationType(ToolTip.AnimationType.FROM_TOP);
+        if (!SPmanager.getInstance().getTooltipsShown()) {
+            myToolTipView = fabToolTip.showToolTipForView(toolTipForFab, fab);
+            myToolTipView2 = searchToolTip.showToolTipForView(toolTipForSearch, findViewById(R.id.secretView));
+        }
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent i = new Intent(getApplicationContext(), MapsActivity.class);
                 startActivityForResult(i,1);
+                if (myToolTipView != null) {
+                    myToolTipView.onClick(myToolTipView);
+                    myToolTipView2.onClick(myToolTipView2);
+                    SPmanager.getInstance().setTooltipsShown(true);
+                }
             }
         });
+
     }
 
     void setupAdapter() {
@@ -85,8 +111,7 @@ public class SearchActivity extends AppCompatActivity {
                 convertView = LayoutInflater.from(getApplicationContext())
                         .inflate(R.layout.gallery_item, parent, false);
             }
-            ImageView imageView = (ImageView)convertView
-                    .findViewById(R.id.gallery_item_ImageView);
+            ImageView imageView = (ImageView)convertView.findViewById(R.id.gallery_item_ImageView);
             String url = getItem(position).toString();
             final String url_big = getBiggestNotEmptyImage(getItem(position));
             final String uid = "id" + getItem(position).owner_id;
@@ -112,7 +137,7 @@ public class SearchActivity extends AppCompatActivity {
             return photo.photo_807;
         if (!photo.photo_604.isEmpty())
             return photo.photo_604;
-        return "http://abitur.psuti.ru/uploads/spiski/002bi_files/red-question.png";
+        return "";
     }
 
     VKRequest.VKRequestListener mRequestListener = new VKRequest.VKRequestListener() {
@@ -128,6 +153,7 @@ public class SearchActivity extends AppCompatActivity {
 
         @Override
         public void onError(VKError error) {
+            progressBar.setVisibility(View.INVISIBLE);
         }
 
         @Override
@@ -138,6 +164,7 @@ public class SearchActivity extends AppCompatActivity {
 
         @Override
         public void attemptFailed(VKRequest request, int attemptNumber, int totalAttempts) {
+            progressBar.setVisibility(View.INVISIBLE);
         }
     };
 
@@ -164,10 +191,15 @@ public class SearchActivity extends AppCompatActivity {
         if(Intent.ACTION_SEARCH.equals(intent.getAction())) {
             // Здесь будет храниться то, что пользователь ввёл в поисковой строке
             String search = intent.getStringExtra(SearchManager.QUERY); // поисковой запрос
-            VKRequest request = VKRequest.getRegisteredRequest(VKApi.photos().search(search,0,0,0,0, 300).registerObject());
+            VKRequest request = VKRequest.getRegisteredRequest(VKApi.photos().search(search,0,0,0,0, 300, 5000).registerObject());
             myRequest = request;
             myRequest.executeWithListener(mRequestListener);
             progressBar.setVisibility(View.VISIBLE);
+            if (myToolTipView != null) {
+                myToolTipView.onClick(myToolTipView);
+                myToolTipView2.onClick(myToolTipView2);
+                SPmanager.getInstance().setTooltipsShown(true);
+            }
         }
     }
 
@@ -176,7 +208,11 @@ public class SearchActivity extends AppCompatActivity {
         if (data == null) {return;}
         Double lat = data.getDoubleExtra("lat", 55.75); // получаем координаты и выполняем запрос фото
         Double longi = data.getDoubleExtra("long", 37.61);
-        VKRequest request = VKRequest.getRegisteredRequest(VKApi.photos().search("",lat,longi,0,0, 500).registerObject());
+        int radius = data.getIntExtra("rad", 5000);
+        SPmanager prefs = SPmanager.getInstance();
+        prefs.setLastLat(lat.floatValue());
+        prefs.setLastLong(longi.floatValue());
+        VKRequest request = VKRequest.getRegisteredRequest(VKApi.photos().search("",lat,longi,0,0, 500, radius).registerObject());
         myRequest = request;
         myRequest.executeWithListener(mRequestListener);
         progressBar.setVisibility(View.VISIBLE);

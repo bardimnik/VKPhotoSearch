@@ -20,7 +20,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.vision.text.Text;
+
 import com.squareup.picasso.Picasso;
 
 import static android.content.Context.DOWNLOAD_SERVICE;
@@ -105,6 +105,12 @@ public class ImageFragment extends DialogFragment implements View.OnLongClickLis
 
     @Override
     public void onClick(View view) {
-        Toast.makeText(getActivity(), uid, Toast.LENGTH_SHORT).show();
+        if (uid != null && !uid.isEmpty()) {
+            String link = "https://vk.com/" + uid;
+            Toast.makeText(getActivity(), link, Toast.LENGTH_SHORT).show();
+            Uri address = Uri.parse(link);
+            Intent openlinkIntent = new Intent(Intent.ACTION_VIEW, address);
+            startActivity(openlinkIntent);
+        }
     }
 }

@@ -1,5 +1,7 @@
 package com.opiumfive.vkphotosearch;
 
+import android.content.Context;
+
 import com.vk.sdk.VKSdk;
 
 /**
@@ -7,6 +9,16 @@ import com.vk.sdk.VKSdk;
  */
 
 public class Application extends android.app.Application {
+
+    private static Application mInstance;
+
+    public Application() {
+        mInstance = this;
+    }
+
+    public static Context getAppContext() {
+        return mInstance.getApplicationContext();
+    }
 
     @Override
     public void onCreate() {

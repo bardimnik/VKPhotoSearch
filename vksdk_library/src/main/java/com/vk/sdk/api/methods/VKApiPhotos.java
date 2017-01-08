@@ -33,13 +33,14 @@ import com.vk.sdk.util.VKUtil;
  */
 public class VKApiPhotos extends VKApiBase {
 
-    public VKRequest search(String q, double lat, double lon, long  sort, long offset, long count) {
+    public VKRequest search(String q, double lat, double lon, long  sort, long offset, long count, int radius) {
         return prepareRequest("search", VKUtil.paramsFrom(VKApiConst.Q, q,
                                                           VKApiConst.LAT, String.valueOf(lat),
                                                           VKApiConst.LONG, String.valueOf(lon),
                                                           VKApiConst.SORT, String.valueOf(sort),
                                                           VKApiConst.OFFSET, String.valueOf(offset),
-                                                          VKApiConst.COUNT, String.valueOf(count)
+                                                          VKApiConst.COUNT, String.valueOf(count),
+                                                          VKApiConst.RADIUS, radius
                                                           ), VKPhotoArray.class);
     }
 

@@ -116,6 +116,7 @@ public class VKApiConst {
     public static final String REV = "rev";
     public static final String FEED_TYPE = "feed_type";
     public static final String FEED = "feed";
+    public static final String RADIUS = "radius";
 
     //Videos
     public static final String ADULT = "adult";

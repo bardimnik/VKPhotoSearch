@@ -59,13 +59,13 @@ public class SearchActivity extends AppCompatActivity {
         ToolTipRelativeLayout fabToolTip = (ToolTipRelativeLayout) findViewById(R.id.fabToolTip);
         ToolTipRelativeLayout searchToolTip = (ToolTipRelativeLayout) findViewById(R.id.searchToolTip);
         ToolTip toolTipForFab = new ToolTip()
-                .withText("Поиск по карте")
+                .withText(getString(R.string.by_map))
                 .withTextColor(Color.parseColor("#ffffff"))
                 .withColor(Color.parseColor("#3b5f87"))
                 .withShadow()
                 .withAnimationType(ToolTip.AnimationType.FROM_TOP);
         ToolTip toolTipForSearch = new ToolTip()
-                .withText("Поиск по ключевым словам")
+                .withText(getString(R.string.by_keywords))
                 .withTextColor(Color.parseColor("#ffffff"))
                 .withColor(Color.parseColor("#3b5f87"))
                 .withShadow()
@@ -148,7 +148,6 @@ public class SearchActivity extends AppCompatActivity {
             setupAdapter();
             if (photoArray.isEmpty())
                 Toast.makeText(getApplicationContext(),"Ничего не найдено.",Toast.LENGTH_SHORT).show();
-
         }
 
         @Override
@@ -216,7 +215,6 @@ public class SearchActivity extends AppCompatActivity {
         myRequest = request;
         myRequest.executeWithListener(mRequestListener);
         progressBar.setVisibility(View.VISIBLE);
-        Toast.makeText(getApplicationContext(),"Координаты выбраны, сейчас найдем фото.",Toast.LENGTH_SHORT).show();
     }
 
     @Override

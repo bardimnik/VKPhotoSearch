@@ -11,24 +11,14 @@ import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
-
-
 import com.squareup.picasso.Picasso;
 
-import static android.content.Context.DOWNLOAD_SERVICE;
-
-/**
- * Created by allsw on 11.07.2016.
- * Фрагмент с детализированным изображением, которое можно скачать с помощью длительного нажатия.
- */
 
 public class ImageFragment extends DialogFragment implements View.OnLongClickListener, View.OnClickListener {
     private ImageView imageView;
@@ -75,31 +65,26 @@ public class ImageFragment extends DialogFragment implements View.OnLongClickLis
                     query.setFilterById(enqueue);
                     Cursor c = dm.query(query);
                     if (c.moveToFirst()) {
-                        int columnIndex = c
-                                .getColumnIndex(DownloadManager.COLUMN_STATUS);
-                        if (DownloadManager.STATUS_SUCCESSFUL == c
-                                .getInt(columnIndex)) {
-
-                            String uriString = c
-                                    .getString(c
-                                            .getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
-
+                        int columnIndex = c.getColumnIndex(DownloadManager.COLUMN_STATUS);
+                        if (DownloadManager.STATUS_SUCCESSFUL == c.getInt(columnIndex)) {
+                            String uriString = c.getString(c.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
                         }
                     }
                 }
             }
         };
-        getActivity().registerReceiver(receiver, new IntentFilter(
-                DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+
+        getActivity().registerReceiver(receiver, new IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE));
+
         return imageView;
     }
 
     @Override
     public boolean onLongClick(View view) {
-        dm = (DownloadManager) getActivity().getSystemService(DOWNLOAD_SERVICE);
-        DownloadManager.Request request = new DownloadManager.Request(
-                Uri.parse(path));
-        enqueue = dm.enqueue(request);
+        //dm = (DownloadManager) getActivity().getSystemService(DOWNLOAD_SERVICE);
+        //DownloadManager.Request request = new DownloadManager.Request(
+        //        Uri.parse(path));
+        //enqueue = dm.enqueue(request);
         return false;
     }
 

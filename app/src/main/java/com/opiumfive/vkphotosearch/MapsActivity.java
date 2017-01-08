@@ -171,7 +171,7 @@ public class MapsActivity extends FragmentActivity implements
                 getLoc();
             } else {
                 // User refused to grant permission.
-                Toast.makeText(getApplicationContext(), "Вы не предоставили разрешения", Toast.LENGTH_SHORT ).show();
+                Toast.makeText(getApplicationContext(), R.string.no_grant, Toast.LENGTH_SHORT ).show();
             }
         }
     }

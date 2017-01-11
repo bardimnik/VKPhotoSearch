@@ -15,6 +15,7 @@ import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.view.View;
+import android.widget.SeekBar;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -30,6 +31,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class MapsActivity extends FragmentActivity implements
         OnMapReadyCallback, GoogleMap.OnMapLongClickListener {
 
+
+    private SeekBar mSeekBar;
     private GoogleMap mMap;
     private LocationManager mLocationManager;
     private Circle mCircle;
@@ -51,7 +54,6 @@ public class MapsActivity extends FragmentActivity implements
             mCircle.setRadius((double) currentRadius);
         }
     }
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +84,24 @@ public class MapsActivity extends FragmentActivity implements
             @Override
             public void onClick(View v) {
                 returnCoo(currentLL.latitude, currentLL.longitude);
+            }
+        });
+
+        mSeekBar = (SeekBar) findViewById(R.id.seekBar);
+        mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
             }
         });
     }

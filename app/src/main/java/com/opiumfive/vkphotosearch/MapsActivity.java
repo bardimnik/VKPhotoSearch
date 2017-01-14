@@ -29,8 +29,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MapsActivity extends FragmentActivity implements
-        OnMapReadyCallback, GoogleMap.OnMapLongClickListener {
-
+        OnMapReadyCallback, GoogleMap.OnMapLongClickListener, GoogleMap.OnMapClickListener {
 
     private SeekBar mSeekBar;
     private GoogleMap mMap;
@@ -39,6 +38,13 @@ public class MapsActivity extends FragmentActivity implements
     private LatLng currentLL;
     private int currentRadius = 5000;
     private int[] rads = {10,100,800,5000,6000,50000};
+
+    private void toggleRadius(float position) {
+        if (mCircle != null) {
+            mCircle.setRadius((double) 10f + (50000 - 10)/100 * position);
+        }
+    }
+
 
     private void toggleRadius() {
         int i = 0;
@@ -91,18 +97,13 @@ public class MapsActivity extends FragmentActivity implements
         mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                
+                toggleRadius(progress);
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
+            public void onStartTrackingTouch(SeekBar seekBar) {}
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
+            public void onStopTrackingTouch(SeekBar seekBar) {}
         });
     }
 
@@ -110,6 +111,7 @@ public class MapsActivity extends FragmentActivity implements
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setOnMapLongClickListener(this);
+        mMap.setOnMapClickListener(this);
 
         SPmanager prefs = SPmanager.getInstance();
         LatLng preset;
@@ -118,38 +120,17 @@ public class MapsActivity extends FragmentActivity implements
         } else {
             preset = new LatLng(prefs.getLastLat(), prefs.getLastLong());
         }
-        currentLL = preset;
-        mMap.clear();
-        if (mCircle != null) {
-            mCircle.remove();
-        }
-        CameraUpdate zoom = CameraUpdateFactory.zoomTo(10);
-        mCircle = mMap.addCircle(new CircleOptions()
-                    .center(preset)
-                    .clickable(true)
-                    .radius(currentRadius)
-                    .strokeColor(Color.parseColor("#3b5f87")));
-        mMap.addMarker(new MarkerOptions().position(preset));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(preset));
-        mMap.animateCamera(zoom);
+        moveToNewPoint(preset);
     }
 
     @Override
     public void onMapLongClick(LatLng latLng) {
-        mMap.clear();
-        if (mCircle != null) {
-            mCircle.remove();
-        }
-        CameraUpdate zoom = CameraUpdateFactory.zoomTo(10);
-        mMap.addMarker(new MarkerOptions().position(latLng).title(""));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        currentLL = latLng;
-        mMap.animateCamera(zoom);
-        Circle circle = mMap.addCircle(new CircleOptions()
-                .center(latLng)
-                .clickable(true)
-                .radius(currentRadius)
-                .strokeColor(Color.parseColor("#3b5f87")));
+        //moveToNewPoint(latLng);
+    }
+
+    @Override
+    public void onMapClick(LatLng latLng) {
+        moveToNewPoint(latLng);
     }
 
     public void returnCoo(double lat, double longi) {
@@ -187,61 +168,56 @@ public class MapsActivity extends FragmentActivity implements
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 1) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission granted.
                 getLoc();
             } else {
-                // User refused to grant permission.
                 Toast.makeText(getApplicationContext(), R.string.no_grant, Toast.LENGTH_SHORT ).show();
             }
         }
+    }
+
+    private void moveToNewPoint(Object loc) {
+        mMap.clear();
+        if (mCircle != null) {
+            mCircle.remove();
+        }
+        CameraUpdate zoom = CameraUpdateFactory.zoomTo(10);
+        LatLng latLng = null;
+        if (loc instanceof Location) {
+            Location tempLocation = (Location) loc;
+            latLng = new LatLng(tempLocation.getLatitude(), tempLocation.getLongitude());
+        } else if (loc instanceof LatLng) {
+            latLng = (LatLng) loc;
+        }
+        currentLL = latLng;
+        mMap.addMarker(new MarkerOptions().position(latLng).title(""));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+        mMap.animateCamera(zoom);
+        mCircle = mMap.addCircle(new CircleOptions()
+                .center(latLng)
+                .clickable(true)
+                .radius(currentRadius)
+                .strokeColor(Color.parseColor("#3b5f87")));
     }
 
     public void getLoc() {
         try {
             Location last = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             if (last != null) {
-                mMap.clear();
-                if (mCircle != null) {
-                    mCircle.remove();
-                }
-                CameraUpdate zoom = CameraUpdateFactory.zoomTo(10);
-                LatLng latLng = new LatLng(last.getLatitude(), last.getLongitude());
-                currentLL = latLng;
-                mMap.addMarker(new MarkerOptions().position(latLng).title(""));
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-                mMap.animateCamera(zoom);
-                Circle circle = mMap.addCircle(new CircleOptions()
-                        .center(latLng)
-                        .clickable(true)
-                        .radius(currentRadius)
-                        .strokeColor(Color.parseColor("#3b5f87")));
+                moveToNewPoint(last);
             }
         } catch (SecurityException e) {}
-        long minTime = 1;
-        float minDistance = 9000.0f;
+        long minTime = 5000;
+        float minDistance = 10.0f;
         try {
             mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime, minDistance, mLocationListener);
+            mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, minTime, minDistance, mLocationListener);
         } catch (SecurityException e) {}
     }
 
     private final LocationListener mLocationListener = new LocationListener() {
         @Override
         public void onLocationChanged(final Location location) {
-            mMap.clear();
-            if (mCircle != null) {
-                mCircle.remove();
-            }
-            CameraUpdate zoom = CameraUpdateFactory.zoomTo(10);
-            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-            currentLL = latLng;
-            mMap.addMarker(new MarkerOptions().position(latLng).title(""));
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-            mMap.animateCamera(zoom);
-            Circle circle = mMap.addCircle(new CircleOptions()
-                    .center(latLng)
-                    .clickable(true)
-                    .radius(currentRadius)
-                    .strokeColor(Color.parseColor("#3b5f87")));
+            moveToNewPoint(location);
             try {
                 mLocationManager.removeUpdates(mLocationListener);
             } catch (SecurityException ex) {}

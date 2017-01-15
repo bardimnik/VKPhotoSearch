@@ -3,6 +3,7 @@ package com.opiumfive.vkphotosearch;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
@@ -49,7 +50,14 @@ public class SearchActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         gridView = (GridView) findViewById(R.id.gridView);
-        gridView.setEmptyView(findViewById(R.id.textView));
+        gridView.setEmptyView(findViewById(R.id.emptyView));
+        findViewById(R.id.rate).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String str ="https://play.google.com/store/apps/details?id=com.opiumfive.vkphotosearch";
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(str)));
+            }
+        });
         progressBar = (ProgressBar) findViewById(R.id.progressBar2);
         if (savedInstanceState != null)
             photoArray = savedInstanceState.getParcelable("array");  // при повороте экрана-сворачивании восстановление состояния

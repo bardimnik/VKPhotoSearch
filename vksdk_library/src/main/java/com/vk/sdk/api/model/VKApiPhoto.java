@@ -113,6 +113,9 @@ public class VKApiPhoto extends VKAttachments.VKApiAttachment implements Parcela
      */
     public boolean user_likes;
 
+    public double lat;
+    public double lon;
+
     /**
      * Whether the current user can comment on the photo
      */
@@ -161,6 +164,8 @@ public class VKApiPhoto extends VKAttachments.VKApiAttachment implements Parcela
         photo_807 = from.optString("photo_807");
         photo_1280 = from.optString("photo_1280");
         photo_2560 = from.optString("photo_2560");
+        lat = from.optDouble("lat");
+        lon = from.optDouble("long");
 
         JSONObject likes = from.optJSONObject("likes");
         this.likes = ParseUtils.parseInt(likes, "count");
@@ -221,6 +226,8 @@ public class VKApiPhoto extends VKAttachments.VKApiAttachment implements Parcela
         this.comments = in.readInt();
         this.tags = in.readInt();
         this.access_key = in.readString();
+        this.lat = in.readDouble();
+        this.lon = in.readDouble();
     }
 
     /**
@@ -290,6 +297,8 @@ public class VKApiPhoto extends VKAttachments.VKApiAttachment implements Parcela
         dest.writeInt(this.comments);
         dest.writeInt(this.tags);
         dest.writeString(this.access_key);
+        dest.writeDouble(this.lat);
+        dest.writeDouble(this.lon);
     }
 
     public static Creator<VKApiPhoto> CREATOR = new Creator<VKApiPhoto>() {

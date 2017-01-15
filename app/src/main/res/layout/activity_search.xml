@@ -35,15 +35,39 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <TextView
+
+            <LinearLayout
+                android:id="@+id/emptyView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="@string/empty"
-                android:id="@+id/textView"
-                android:textColor="#000"
                 android:layout_gravity="center"
-                android:gravity="center"/>
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="@string/empty"
+                    android:id="@+id/textView"
+                    android:textColor="#000"
+                    android:layout_gravity="center"
+                    android:gravity="center"/>
+
+                <TextView
+                    android:id="@+id/rate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/rate_the_app"
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:textColor="@color/colorAccent"
+                    android:padding="15dp"
+                    android:textStyle="bold"
+                    android:layout_gravity="center"
+                    android:textSize="26sp"
+                    android:layout_marginBottom="25dp"/>
+
+            </LinearLayout>
 
             <GridView
                 android:layout_width="match_parent"

@@ -1,21 +1,32 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        config {
+            keyAlias KEYS_ALIAS
+            keyPassword KEYS_PASS
+            storeFile file('/home/opiumfive/android-studio/key_vkphotosearch.jks')
+            storePassword KEYS_PASS
+        }
+    }
     compileSdkVersion 25
     buildToolsVersion "25.0.2"
     defaultConfig {
         applicationId "com.opiumfive.vkphotosearch"
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 4
-        versionName "1.03"
+        versionCode 5
+        versionName "1.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        signingConfig signingConfigs.config
     }
     buildTypes {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    productFlavors {
     }
 }
 

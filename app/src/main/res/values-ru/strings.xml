@@ -10,4 +10,7 @@
     <string name="by_keywords">Поиск по ключевым словам</string>
     <string name="ok">OK</string>
     <string name="empty">Пусто.\nВыполните поиск.</string>
+    <string name="photos"> фото</string>
+    <string name="splash">Смотри фото рядом или в любой точке карты или ищи по ключевым словам</string>
+    <string name="rate_the_app">Оценить приложение</string>
 </resources>

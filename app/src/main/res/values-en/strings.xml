@@ -10,4 +10,7 @@
     <string name="by_keywords">Search by keywords</string>
     <string name="ok">OK</string>
     <string name="empty">Empty.\nPerform search.</string>
+    <string name="photos"> photos</string>
+    <string name="splash">Look through photos near you or any place in map or search by a keyword</string>
+    <string name="rate_the_app">Rate the App</string>
 </resources>

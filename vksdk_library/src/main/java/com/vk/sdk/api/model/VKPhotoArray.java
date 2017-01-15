@@ -27,6 +27,9 @@ import android.os.Parcelable;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Array of API photos objects
 */
@@ -39,6 +42,7 @@ public class VKPhotoArray extends VKList<VKApiPhoto> implements Parcelable {
 
     @SuppressWarnings("unused")
     public VKPhotoArray() {
+        super();
     }
 
     public VKPhotoArray(Parcel in) {

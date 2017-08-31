@@ -1,24 +1,24 @@
 apply plugin: 'com.android.application'
 
 android {
-    signingConfigs {
-        config {
-            keyAlias KEYS_ALIAS
-            keyPassword KEYS_PASS
-            storeFile file('/home/opiumfive/android-studio/key_vkphotosearch.jks')
-            storePassword KEYS_PASS
-        }
-    }
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    //signingConfigs {
+    //    config {
+   //         keyAlias KEYS_ALIAS
+    //        keyPassword KEYS_PASS
+    //        storeFile file('/home/opiumfive/android-studio/key_vkphotosearch.jks')
+     //       storePassword KEYS_PASS
+    //    }
+    //}
+    compileSdkVersion 26
+    buildToolsVersion "26.0.1"
     defaultConfig {
         applicationId "com.opiumfive.vkphotosearch"
         minSdkVersion 15
-        targetSdkVersion 25
-        versionCode 5
-        versionName "1.1"
+        targetSdkVersion 26
+        versionCode 7
+        versionName "1.3"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        signingConfig signingConfigs.config
+        //signingConfig signingConfigs.config
     }
     buildTypes {
         release {
@@ -32,16 +32,13 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-    compile 'com.android.support:appcompat-v7:25.1.0'
-    compile 'com.android.support:design:25.1.0'
-    compile 'com.google.android.gms:play-services:10.0.1'
+
+    compile 'com.android.support:appcompat-v7:26.0.0'
+    compile 'com.android.support:design:26.0.0'
+    compile 'com.google.android.gms:play-services-maps:11.0.4'
     compile project(':vksdk_library')
     compile 'com.squareup.okhttp3:okhttp:3.4.1'
     compile 'com.squareup.picasso:picasso:2.5.2'
-    testCompile 'junit:junit:4.12'
-    compile 'com.android.support.constraint:constraint-layout:1.0.0-beta4'
-    compile 'com.nhaarman.supertooltips:library:3.0.+'
+
+    compile 'com.nhaarman.supertooltips:library:3.0.0'
 }

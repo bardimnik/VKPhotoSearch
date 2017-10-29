@@ -6,10 +6,7 @@
     android:scaleType="centerCrop"
     android:cropToPadding="false"
     android:layout_gravity="center"
-
     android:paddingBottom="1dp"
     android:paddingLeft="1dp"
     android:paddingRight="1dp"
-    android:paddingTop="1dp">
-
-</ImageView>
+    android:paddingTop="1dp" />

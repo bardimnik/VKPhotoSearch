@@ -1,6 +1,7 @@
 package com.opiumfive.vkphotosearch;
 
 import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
@@ -8,8 +9,10 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -37,9 +40,9 @@ public class SearchActivity extends AppCompatActivity {
     private VKRequest myRequest;
     private GridView gridView;
     private VKPhotoArray photoArray;  // массив объектов фото
-    ProgressBar progressBar;
-    ToolTipView myToolTipView;
-    ToolTipView myToolTipView2;
+    private ProgressBar progressBar;
+    private ToolTipView myToolTipView;
+    private ToolTipView myToolTipView2;
 
 
     @Override
@@ -59,40 +62,18 @@ public class SearchActivity extends AppCompatActivity {
             }
         });
         progressBar = (ProgressBar) findViewById(R.id.progressBar2);
-        if (savedInstanceState != null)
+        if (savedInstanceState != null) {
             photoArray = savedInstanceState.getParcelable("array");  // при повороте экрана-сворачивании восстановление состояния
+        }
         setupAdapter();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab); // кнопка для открытия карт
-        ToolTipRelativeLayout fabToolTip = (ToolTipRelativeLayout) findViewById(R.id.fabToolTip);
-        ToolTipRelativeLayout searchToolTip = (ToolTipRelativeLayout) findViewById(R.id.searchToolTip);
-        ToolTip toolTipForFab = new ToolTip()
-                .withText(getString(R.string.by_map))
-                .withTextColor(Color.parseColor("#ffffff"))
-                .withColor(Color.parseColor("#3b5f87"))
-                .withShadow()
-                .withAnimationType(ToolTip.AnimationType.FROM_TOP);
-        ToolTip toolTipForSearch = new ToolTip()
-                .withText(getString(R.string.by_keywords))
-                .withTextColor(Color.parseColor("#ffffff"))
-                .withColor(Color.parseColor("#3b5f87"))
-                .withShadow()
-                .withAnimationType(ToolTip.AnimationType.FROM_TOP);
-        if (!SPmanager.getInstance().getTooltipsShown()) {
-            myToolTipView = fabToolTip.showToolTipForView(toolTipForFab, fab);
-            myToolTipView2 = searchToolTip.showToolTipForView(toolTipForSearch, findViewById(R.id.secretView));
-        }
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent i = new Intent(getApplicationContext(), MapsActivity.class);
                 startActivityForResult(i,1);
-                if (myToolTipView != null) {
-                    myToolTipView.onClick(myToolTipView);
-                    myToolTipView2.onClick(myToolTipView2);
-                    SPmanager.getInstance().setTooltipsShown(true);
-                }
             }
         });
 
@@ -164,9 +145,7 @@ public class SearchActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onProgress(VKRequest.VKProgressType progressType, long bytesLoaded,
-                               long bytesTotal) {
-
+        public void onProgress(VKRequest.VKProgressType progressType, long bytesLoaded, long bytesTotal) {
         }
 
         @Override
@@ -177,9 +156,38 @@ public class SearchActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_search, menu);
-        return true;
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_search, menu);
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        final SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                if (query.length() >= 1) getPhotos(query);
+                searchView.clearFocus();
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setIconifiedByDefault(true);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    private void getPhotos(String query) {
+        VKRequest request = VKRequest.getRegisteredRequest(VKApi.photos().search(query,0,0,0,0, 300, 5000).registerObject());
+        myRequest = request;
+        myRequest.executeWithListener(mRequestListener);
+        progressBar.setVisibility(View.VISIBLE);
+        if (myToolTipView != null) {
+            myToolTipView.onClick(myToolTipView);
+            myToolTipView2.onClick(myToolTipView2);
+            SPmanager.getInstance().setTooltipsShown(true);
+        }
     }
 
     @Override
@@ -191,23 +199,6 @@ public class SearchActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        if(Intent.ACTION_SEARCH.equals(intent.getAction())) {
-            // Здесь будет храниться то, что пользователь ввёл в поисковой строке
-            String search = intent.getStringExtra(SearchManager.QUERY); // поисковой запрос
-            VKRequest request = VKRequest.getRegisteredRequest(VKApi.photos().search(search,0,0,0,0, 300, 5000).registerObject());
-            myRequest = request;
-            myRequest.executeWithListener(mRequestListener);
-            progressBar.setVisibility(View.VISIBLE);
-            if (myToolTipView != null) {
-                myToolTipView.onClick(myToolTipView);
-                myToolTipView2.onClick(myToolTipView2);
-                SPmanager.getInstance().setTooltipsShown(true);
-            }
-        }
     }
 
     @Override

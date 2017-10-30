@@ -24,9 +24,6 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.nhaarman.supertooltips.ToolTip;
-import com.nhaarman.supertooltips.ToolTipRelativeLayout;
-import com.nhaarman.supertooltips.ToolTipView;
 import com.squareup.picasso.Picasso;
 import com.vk.sdk.api.VKApi;
 import com.vk.sdk.api.VKError;
@@ -42,8 +39,6 @@ public class SearchActivity extends AppCompatActivity {
     private GridView gridView;
     private VKPhotoArray photoArray;  // массив объектов фото
     private ProgressBar progressBar;
-    private ToolTipView myToolTipView;
-    private ToolTipView myToolTipView2;
 
 
     @Override
@@ -184,11 +179,6 @@ public class SearchActivity extends AppCompatActivity {
         myRequest = request;
         myRequest.executeWithListener(mRequestListener);
         progressBar.setVisibility(View.VISIBLE);
-        if (myToolTipView != null) {
-            myToolTipView.onClick(myToolTipView);
-            myToolTipView2.onClick(myToolTipView2);
-            SPmanager.getInstance().setTooltipsShown(true);
-        }
     }
 
     @Override

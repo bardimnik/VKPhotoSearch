@@ -36,8 +36,7 @@ import com.vk.sdk.api.VKResponse;
 import com.vk.sdk.api.model.VKApiPhoto;
 import com.vk.sdk.api.model.VKPhotoArray;
 
-public class MapsActivity extends FragmentActivity implements
-        OnMapReadyCallback, GoogleMap.OnMapLongClickListener, GoogleMap.OnMapClickListener {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMapLongClickListener, GoogleMap.OnMapClickListener {
 
     private SeekBar mSeekBar;
     private GoogleMap mMap;
@@ -65,15 +64,14 @@ public class MapsActivity extends FragmentActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         if (mLocationManager == null) {
             mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         }
 
-        count = (TextView) findViewById(R.id.count);
-        meters = (TextView) findViewById(R.id.meters);
+        count = findViewById(R.id.count);
+        meters = findViewById(R.id.meters);
 
         findViewById(R.id.myLocation).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -96,7 +94,7 @@ public class MapsActivity extends FragmentActivity implements
             }
         });
 
-        mSeekBar = (SeekBar) findViewById(R.id.seekBar);
+        mSeekBar = findViewById(R.id.seekBar);
         mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -124,10 +122,7 @@ public class MapsActivity extends FragmentActivity implements
             preset = new LatLng(prefs.getLastLat(), prefs.getLastLong());
         }
         moveToNewPoint(preset, false);
-
     }
-
-
 
     @Override
     public void onMapLongClick(LatLng latLng) {
@@ -343,25 +338,4 @@ public class MapsActivity extends FragmentActivity implements
         if (myRequest != null)
             myRequest.cancel();
     }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        if (myRequest != null) {
-            outState.putLong("request", myRequest.registerObject());
-        }
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-
-        long requestId = savedInstanceState.getLong("request");
-        myRequest = VKRequest.getRegisteredRequest(requestId);
-        if (myRequest != null) {
-            myRequest.unregisterObject();
-            myRequest.setRequestListener(mRequestListener);
-        }
-    }
-
 }

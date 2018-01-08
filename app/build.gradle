@@ -10,7 +10,7 @@ android {
         }
     }
     compileSdkVersion 26
-    buildToolsVersion "26.0.2"
+    buildToolsVersion "26.0.3"
     defaultConfig {
         applicationId "com.opiumfive.vkphotosearch"
         minSdkVersion 15
@@ -21,7 +21,7 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }

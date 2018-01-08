@@ -132,7 +132,7 @@ public class SearchActivity extends AppCompatActivity {
             progressBar.setVisibility(View.INVISIBLE);
             setupAdapter();
             if (photoArray.isEmpty())
-                Toast.makeText(getApplicationContext(),"Ничего не найдено.",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), R.string.nothing,Toast.LENGTH_SHORT).show();
         }
 
         @Override
@@ -212,26 +212,5 @@ public class SearchActivity extends AppCompatActivity {
         super.onDestroy();
         if (myRequest != null)
             myRequest.cancel();
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putParcelable("array",photoArray);
-        if (myRequest != null) {
-            outState.putLong("request", myRequest.registerObject());
-        }
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-
-        long requestId = savedInstanceState.getLong("request");
-        myRequest = VKRequest.getRegisteredRequest(requestId);
-        if (myRequest != null) {
-            myRequest.unregisterObject();
-            myRequest.setRequestListener(mRequestListener);
-        }
     }
 }

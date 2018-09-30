@@ -41,7 +41,7 @@ public class ImageFragment extends DialogFragment implements View.OnClickListene
         imageView.setOnClickListener(this);
         path = (String)getArguments().getSerializable("image_path");
         uid = (String)getArguments().getSerializable("user_id");
-        Picasso.with(getActivity()).load(path).into(imageView);
+        Picasso.get().load(path).into(imageView);
         return imageView;
     }
 

@@ -1,12 +1,28 @@
+buildscript {
+    repositories {
+        maven { url 'https://maven.fabric.io/public' }
+    }
+
+    dependencies {
+        classpath 'io.fabric.tools:gradle:1.+'
+    }
+}
+
 apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
+
+repositories {
+    maven { url 'https://maven.fabric.io/public' }
+}
+
 
 android {
     signingConfigs {
         config {
-            keyAlias KEYS_ALIAS
-            keyPassword KEYS_PASS
-            storeFile file('/home/opiumfive/android-studio/key_vkphotosearch.jks')
-            storePassword KEYS_PASS
+            keyAlias 'carpe diem'
+            keyPassword 'cdefgabc777374'
+            storeFile file('../key_vkphotosearch.jks')
+            storePassword 'cdefgabc777374'
         }
     }
     compileSdkVersion 27
@@ -38,4 +54,7 @@ dependencies {
     compile project(':vksdk_library')
     compile 'com.squareup.okhttp3:okhttp:3.11.0'
     compile 'com.squareup.picasso:picasso:2.71828'
+
+    compile('com.crashlytics.sdk.android:answers:1.4.3@aar') { transitive = true }
+    compile('com.crashlytics.sdk.android:crashlytics:2.9.5@aar') { transitive = true }
 }

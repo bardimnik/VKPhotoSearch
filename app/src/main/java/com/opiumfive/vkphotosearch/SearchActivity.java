@@ -108,7 +108,7 @@ public class SearchActivity extends AppCompatActivity {
                 }
             });
 
-            Picasso.with(getApplicationContext()).load(url).into(imageView); //  загрузка фотографий в грид
+            Picasso.get().load(url).into(imageView); //  загрузка фотографий в грид
             return convertView;
         }
     }

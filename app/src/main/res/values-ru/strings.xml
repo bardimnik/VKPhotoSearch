@@ -3,7 +3,7 @@
     <string name="action_settings">Настройки</string>
     <string name="title_activity_maps">Карта</string>
     <string name="search_hint">Поиск фото</string>
-    <integer name="com_vk_sdk_AppId">5544544</integer>
+    <integer name="com_vk_sdk_AppId">6707454</integer>
     <string name="maps_activity_toast">Выбери точку на карте, в которой искать фото</string>
     <string name="no_grant">Вы не предоставили разрешения</string>
     <string name="by_map">Поиск по карте</string>

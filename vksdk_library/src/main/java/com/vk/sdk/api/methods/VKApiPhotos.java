@@ -40,7 +40,8 @@ public class VKApiPhotos extends VKApiBase {
                                                           VKApiConst.SORT, String.valueOf(sort),
                                                           VKApiConst.OFFSET, String.valueOf(offset),
                                                           VKApiConst.COUNT, String.valueOf(count),
-                                                          VKApiConst.RADIUS, radius
+                                                          VKApiConst.RADIUS, radius,
+                                                          VKApiConst.ACCESS_TOKEN, "050dcf12050dcf12050dcf1222056b97ec0050d050dcf125ebd2727be2a484c80de9493"
                                                           ), VKPhotoArray.class);
     }
 

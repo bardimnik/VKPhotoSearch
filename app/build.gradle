@@ -31,8 +31,8 @@ android {
         applicationId "com.opiumfive.vkphotosearch"
         minSdkVersion 15
         targetSdkVersion 27
-        versionCode 7
-        versionName "1.4"
+        versionCode 8
+        versionName "1.5"
         signingConfig signingConfigs.config
     }
     buildTypes {

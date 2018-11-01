@@ -34,6 +34,7 @@
             android:value="AIzaSyDg2JxwiY-CrQ8oR4Fp6ydh3a6uykbA7Sk" />
 
         <activity
+            android:theme="@style/AppTheme.NoActionBar"
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps" />
 

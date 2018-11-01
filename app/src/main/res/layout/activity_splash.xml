@@ -4,51 +4,50 @@
     android:id="@+id/activity_splash"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
 
     tools:context="com.opiumfive.vkphotosearch.SplashActivity">
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_centerInParent="true">
+        android:layout_centerInParent="true"
+        android:orientation="vertical">
 
         <ImageView
             android:id="@+id/spim"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:src="@drawable/logo"
-            android:layout_gravity="center"/>
+            android:layout_gravity="center"
+            android:src="@drawable/logo" />
 
         <TextView
             android:id="@+id/name"
-            android:layout_below="@id/spim"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="26sp"
-            android:textColor="#333333"
-            android:text="@string/app_name"
+            android:layout_below="@id/spim"
             android:layout_gravity="center"
-            android:layout_marginTop="10dp"/>
+            android:layout_marginTop="10dp"
+            android:text="@string/app_name"
+            android:textColor="#333333"
+            android:textSize="26sp" />
 
         <TextView
-            android:layout_below="@id/name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="22sp"
-            android:textColor="#555555"
-            android:text="@string/splash"
+            android:layout_below="@id/name"
             android:layout_gravity="center"
-            android:textAlignment="center"
             android:layout_marginLeft="20dp"
+            android:layout_marginTop="5dp"
             android:layout_marginRight="20dp"
-            android:layout_marginTop="5dp"/>
+            android:text="@string/splash"
+            android:textAlignment="center"
+            android:textColor="#555555"
+            android:textSize="22sp" />
     </LinearLayout>
-
 
 
 </RelativeLayout>

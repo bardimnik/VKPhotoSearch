@@ -4,9 +4,9 @@
     tools:context="com.opiumfive.vkphotosearch.SearchActivity">
 
     <item
-        android:title="поиск"
         android:id="@+id/search"
         android:icon="@drawable/magnify"
+        android:title="поиск"
         app:actionViewClass="android.support.v7.widget.SearchView"
         app:showAsAction="always" />
 </menu>

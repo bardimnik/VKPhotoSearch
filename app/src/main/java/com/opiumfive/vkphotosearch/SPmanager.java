@@ -6,17 +6,31 @@ import android.content.SharedPreferences;
 
 public class SPmanager {
 
-    private volatile static SPmanager mInstance;
-
     private static final String USER_PREFERENCES_NAME = "user_preferences";
     private final static String KEY_TOOLTIPS_SHOWN = "key_tooltips_shown";
     private final static String KEY_LAST_LAT = "key_lat";
     private final static String KEY_LAST_LONG = "key_long";
-
+    private volatile static SPmanager mInstance;
     private boolean mTooltipsShown;
     private float mLastLat;
     private float mLastLong;
 
+
+    private SPmanager() {
+        SharedPreferences preferences;
+        final Context context = Application.getAppContext();
+        preferences = context.getSharedPreferences(USER_PREFERENCES_NAME, context.MODE_PRIVATE);
+        mTooltipsShown = preferences.getBoolean(KEY_TOOLTIPS_SHOWN, false);
+        mLastLat = preferences.getFloat(KEY_LAST_LAT, 0.0f);
+        mLastLong = preferences.getFloat(KEY_LAST_LONG, 0.0f);
+    }
+
+    public static synchronized SPmanager getInstance() {
+        if (mInstance == null) {
+            mInstance = new SPmanager();
+        }
+        return mInstance;
+    }
 
     public boolean getTooltipsShown() {
         return mTooltipsShown;
@@ -43,22 +57,6 @@ public class SPmanager {
     public void setLastLong(float lastLong) {
         this.mLastLong = lastLong;
         persistFloat(KEY_LAST_LONG, this.mLastLong);
-    }
-
-    private SPmanager() {
-        SharedPreferences preferences;
-        final Context context = Application.getAppContext();
-        preferences = context.getSharedPreferences(USER_PREFERENCES_NAME, context.MODE_PRIVATE);
-        mTooltipsShown = preferences.getBoolean(KEY_TOOLTIPS_SHOWN, false);
-        mLastLat = preferences.getFloat(KEY_LAST_LAT, 0.0f);
-        mLastLong = preferences.getFloat(KEY_LAST_LONG, 0.0f);
-    }
-
-    public static synchronized SPmanager getInstance() {
-        if (mInstance == null) {
-            mInstance = new SPmanager();
-        }
-        return mInstance;
     }
 
     private void persistBoolean(final String key, final boolean value) {

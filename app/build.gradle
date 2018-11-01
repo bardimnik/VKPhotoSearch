@@ -25,14 +25,14 @@ android {
             storePassword 'cdefgabc777374'
         }
     }
-    compileSdkVersion 27
-    buildToolsVersion '27.0.3'
+    compileSdkVersion 28
+    buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "com.opiumfive.vkphotosearch"
         minSdkVersion 15
-        targetSdkVersion 27
-        versionCode 8
-        versionName "1.5"
+        targetSdkVersion 28
+        versionCode 10
+        versionName "2.0"
         signingConfig signingConfigs.config
     }
     buildTypes {
@@ -48,9 +48,12 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
-    implementation 'com.android.support:appcompat-v7:27.1.0'
-    implementation 'com.android.support:design:27.1.0'
-    implementation 'com.google.android.gms:play-services-maps:12.0.1'
+    implementation 'com.android.support:appcompat-v7:28.0.0'
+    implementation 'com.android.support:support-media-compat:28.0.0'
+    implementation 'com.android.support:animated-vector-drawable:28.0.0'
+    implementation 'com.android.support:exifinterface:28.0.0'
+    implementation 'com.android.support:design:28.0.0'
+    implementation 'com.google.android.gms:play-services-maps:16.0.0'
     implementation project(':vksdk_library')
     implementation 'com.squareup.okhttp3:okhttp:3.11.0'
     implementation 'com.squareup.picasso:picasso:2.71828'

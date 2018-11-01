@@ -3,8 +3,9 @@ package com.opiumfive.vkphotosearch;
 import android.content.Context;
 
 import com.crashlytics.android.Crashlytics;
-import com.vk.sdk.VKSdk;
 import com.crashlytics.android.answers.Answers;
+import com.vk.sdk.VKSdk;
+
 import io.fabric.sdk.android.Fabric;
 
 /**

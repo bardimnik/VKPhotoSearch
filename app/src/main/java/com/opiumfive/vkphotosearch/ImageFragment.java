@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.Toast;
+
 import com.squareup.picasso.Picasso;
 
 
@@ -39,8 +40,8 @@ public class ImageFragment extends DialogFragment implements View.OnClickListene
         imageView.setMinimumWidth(size.x);
         imageView.setBackgroundColor(Color.BLACK);
         imageView.setOnClickListener(this);
-        path = (String)getArguments().getSerializable("image_path");
-        uid = (String)getArguments().getSerializable("user_id");
+        path = (String) getArguments().getSerializable("image_path");
+        uid = (String) getArguments().getSerializable("user_id");
         Picasso.get().load(path).into(imageView);
         return imageView;
     }
